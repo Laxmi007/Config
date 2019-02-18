@@ -25,4 +25,11 @@ node('master') {
 	                           
 	                                           }
 	                             }
-								 }
+							
+				stage('App Checkout ') {
+	                        	     	echo "${AppUrl}"
+	                             		git "${AppUrl}"
+	                 
+				}
+
+}
