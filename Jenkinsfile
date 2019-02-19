@@ -38,7 +38,7 @@ node('master') {
 	                                           sh 'mvn clean package'
 	                        }
 				stage('Build Management'){
-	                                           def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
+	                                          def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
 	                                          def uploadSpec = """{
 	                                           "files": [
 	                                                {
@@ -48,5 +48,9 @@ node('master') {
 	                                             ]
 	                                          }"""
 	                        }
+				stage('Deployment'){
+						sh 'sudo cp target/*.war /home/devopsuser7/apache-tomcat-8.5.37/webapps'
+						sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
+	                             }
 
 }
