@@ -31,5 +31,8 @@ node('master') {
 	                             		git "${AppUrl}"
 	                 
 				}
+				stage('Code Analysis' ) {
+	                                           sh 'mvn sonar:sonar'
+	                        }
 
 }
