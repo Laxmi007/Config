@@ -7,7 +7,7 @@ node('master') {
 	              def ArtifactoryPath
 	              def UserName
 	              def Password	
-	              TerrPath=props.TerraformPAth
+	              
 	                             def props_path="props_dir"
 	                             
 	                             dir(props_path) {
