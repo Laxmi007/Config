@@ -15,7 +15,7 @@ node('master') {
 	                             
 	                             stage ('Prop Checkout ') {
 	                                           
-	                             	git 'https://github.com/Laxmi007/Util.git'
+	                            git 'https://github.com/Laxmi007/Util.git'
 	                                                          
 	                             	 def props = readProperties file: 'PropertiesFile.properties'
 	                                                          
@@ -56,10 +56,7 @@ node('master') {
 											sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 	                            }
 								 
-				catch(err) {
-								
-	                             currentBuild.result='FAILURE'
-	                             }
+				
 								 
 				}
 			
