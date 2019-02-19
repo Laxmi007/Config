@@ -34,5 +34,8 @@ node('master') {
 				stage('Code Analysis' ) {
 	                                           sh 'mvn sonar:sonar'
 	                        }
+				stage('Build Automation') {    
+	                                           sh 'mvn clean package'
+	                        }
 
 }
