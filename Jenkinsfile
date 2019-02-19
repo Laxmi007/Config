@@ -1,13 +1,14 @@
 node('master') {
 	    
-	            notify('Project Build Started')
+	            
 	              
 	              def AppUrl
 	              def TerrPath
 	              def ArtifactoryPath
 	              def UserName
 	              def Password	
-	              
+	              try
+		      {
 	                             def props_path="props_dir"
 	                             
 	                             dir(props_path) {
@@ -53,6 +54,9 @@ node('master') {
 						sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 	                        }
 			
-		
+		     }	
+		catch(err) {
+			currentBuild.result='FAILURE'
+	        }
 
 }
