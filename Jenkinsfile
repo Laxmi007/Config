@@ -18,7 +18,7 @@ node('master') {
 	              def UserName
 	              def Password
 				 				  
-	              
+	               try{
 	                             def props_path="props_dir"
 	                             
 	                             dir(props_path) {
@@ -67,4 +67,9 @@ node('master') {
 	                            }
 								
 				 notify('Project Build Completed ')
-								}
+			}
+			catch(err) {
+	                    notify("Error ${err}")
+	                    currentBuild.result='FAILURE'
+			}
+	}
