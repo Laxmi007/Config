@@ -65,5 +65,6 @@ node('master') {
 											sh 'sudo cp target/*.war /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 											sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 	                            }
-								 
+								
+				 notify('Project Build Completed ')
 								}
