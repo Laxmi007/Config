@@ -37,5 +37,16 @@ node('master') {
 				stage('Build Automation') {    
 	                                           sh 'mvn clean package'
 	                        }
+				stage('Build Management'){
+	                                           def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
+	                                          def uploadSpec = """{
+	                                           "files": [
+	                                                {
+	                                                         "pattern": "*.war",
+	                                                         "target": "lib-staging"
+	                                                }
+	                                             ]
+	                                          }"""
+	                        }
 
 }
