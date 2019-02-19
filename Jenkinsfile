@@ -1,6 +1,6 @@
 node('master') {
 	    
-	            
+	            notify('Project Build Started')
 	              
 	              def AppUrl
 	              def TerrPath
