@@ -1,56 +1,72 @@
-pipeline{
-	              agent any
-	              stages{
-	                             stage('checkout') {                                       
-	                             steps{
-	                                           script{   
-	                                                          def url = readProperties file: 'propertiesfile.properties'
-	                                                          echo "${url.GIT_URL}"
-	                                                          def Var1= url.GIT_URL
-	                                                          echo "Var1=${Var1}"
-	                                                          git "${Var1}"
-	                                           }
-	                             }
-	              }
-	              stage('Build & Compile') { 
-	                             steps{
-	                             sh 'mvn clean package'
-	                             }
-	              }
-	                             stage ('SonarQube Analysis'){
-	              steps{
-	                             sh 'mvn sonar:sonar'
-	                             }
-	              }
-	                             stage ('Artifactory Deploy'){                      
-	              steps{
-	              script {
-	                             def server = Artifactory.newServer url:'http://localhost:8081/artifactory', username: 'admin', password: 'password'
-	                             def uploadSpec = """{
-	                               "files": [
-	                                           {
-	                                            "pattern": "target/*.war",
-	                                             "target": "lib-staging/"
-	                                           }
-	                             ]
-	                             }"""
+node('master') {
+	    
+	              
+	              notify('Project Build Started')
+	              def AppUrl
+	              def TerrPath
+	              def ArtifactoryPath
+	              def UserName
+	              def Password
+				 				  
+	              
+	                             def props_path="props_dir"
 	                             
-	                                   server.upload(uploadSpec)       }             
+	                             dir(props_path) {
+	                             
+	                                           stage ('Prop Checkout ') {
+	                                           
+	                                                          git 'https://github.com/Laxmi007/Util.git'
+	                                                          
+	                                                          def props = readProperties file: 'PropertiesFile.properties'
+	                                                          
+	                                                          AppUrl=props.GIT_URL
+	                                                     ArtifactoryPath =props.Artifactory_ID
+	                                                     UserName=props.username
+	                                                     Password=props.Password
+	                                              
+	                           
+	                                           }
 	                             }
-	}
-	              stage ('Deploy')
-	{
-	steps{
-	              sh 'sudo cp target/*.war /home/devopsuser7/apache-tomcat-8.5.37/webapps'
-	              sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
-	              }
-	} 
-	stage('notify')
-	{
-	steps{
-	    emailext body: '!!!!!', subject: 'abcd', to: 'laxmi.sahu@mindtree.com'
-	
-	}
-	}
-	              }             
-	}
+								 
+								 stage('App Checkout ') {
+	                                          echo "${AppUrl}"
+	                                           git "${AppUrl}"
+	                             }
+	    
+	                             stage('Code Analysis' ) {
+	                                           sh 'mvn sonar:sonar'
+	                             }
+								 stage('Build Automation') {    
+	                                           sh 'mvn clean package'
+	                             }
+	                             stage('Build Management'){
+	                                           def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
+	                                          def uploadSpec = """{
+	                                           "files": [
+	                                                {
+	                                                         "pattern": "*.war",
+	                                                         "target": "lib-staging"
+	                                                }
+	                                             ]
+	                                          }"""
+	                             }
+								 
+								stage('Deployment'){
+											sh 'sudo cp target/*.war /home/devopsuser7/apache-tomcat-8.5.37/webapps'
+											sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
+	                            }
+								 
+								catch(err) {
+								notify("Error ${err}")
+	                             currentBuild.result='FAILURE'
+	                             }
+								 
+				}
+			def notify(status){
+				emailext(
+				to: "laxmi.sahu@mindtree.com",
+				subject: "${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+				body: """<p>${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' :</p>
+				<p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
+	        
+	        )
