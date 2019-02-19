@@ -1,7 +1,7 @@
 node('master') {
 	    
 	              
-	              notify('Project Build Started')
+	              
 	              def AppUrl
 	              def TerrPath
 	              def ArtifactoryPath
@@ -13,13 +13,13 @@ node('master') {
 	                             
 	                             dir(props_path) {
 	                             
-	                                           stage ('Prop Checkout ') {
+	                             stage ('Prop Checkout ') {
 	                                           
-	                                                          git 'https://github.com/Laxmi007/Util.git'
+	                             	git 'https://github.com/Laxmi007/Util.git'
 	                                                          
-	                                                          def props = readProperties file: 'PropertiesFile.properties'
+	                             	 def props = readProperties file: 'PropertiesFile.properties'
 	                                                          
-	                                                          AppUrl=props.GIT_URL
+	                                                     AppUrl=props.GIT_URL
 	                                                     ArtifactoryPath =props.Artifactory_ID
 	                                                     UserName=props.username
 	                                                     Password=props.Password
@@ -28,19 +28,19 @@ node('master') {
 	                                           }
 	                             }
 								 
-								 stage('App Checkout ') {
+				stage('App Checkout ') {
 	                                          echo "${AppUrl}"
 	                                           git "${AppUrl}"
 	                             }
 	    
-	                             stage('Code Analysis' ) {
+	                        stage('Code Analysis' ) {
 	                                           sh 'mvn sonar:sonar'
 	                             }
 								 stage('Build Automation') {    
 	                                           sh 'mvn clean package'
 	                             }
-	                             stage('Build Management'){
-	                                           def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
+	                        stage('Build Management'){
+	                          def server = Artifactory.newServer url:ArtifactoryPath, username: UserName, password: Password
 	                                          def uploadSpec = """{
 	                                           "files": [
 	                                                {
@@ -56,17 +56,11 @@ node('master') {
 											sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 	                            }
 								 
-								catch(err) {
-								notify("Error ${err}")
+				catch(err) {
+								
 	                             currentBuild.result='FAILURE'
 	                             }
 								 
 				}
-			def notify(status){
-				emailext(
-				to: "laxmi.sahu@mindtree.com",
-				subject: "${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-				body: """<p>${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' :</p>
-				<p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
-	        
+			
 	        )
