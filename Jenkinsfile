@@ -7,7 +7,7 @@ node('master') {
 	              def ArtifactoryPath
 	              def UserName
 	              def Password	
-	              
+	              TerrPath=props.TerraformPAth
 	                             def props_path="props_dir"
 	                             
 	                             dir(props_path) {
@@ -51,6 +51,8 @@ node('master') {
 				stage('Deployment'){
 						sh 'sudo cp target/*.war /home/devopsuser7/apache-tomcat-8.5.37/webapps'
 						sh 'sudo ls -ltr /home/devopsuser7/apache-tomcat-8.5.37/webapps'
-	                             }
+	                        }
+			
+		notify('Project Build Completed ') 
 
 }
